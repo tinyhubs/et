@@ -1,8 +1,8 @@
 package et
 
 import (
-	"testing"
 	"runtime"
+	"testing"
 )
 
 type Assertor interface {

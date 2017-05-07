@@ -1,8 +1,8 @@
 package assert
 
 import (
+	"github.com/tinyhubs/et/et"
 	"testing"
-	"assert/et"
 )
 
 // PassValue is used to check if exp equals to got.
