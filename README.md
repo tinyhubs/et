@@ -7,33 +7,45 @@
 [![codecov](https://codecov.io/gh/tinyhubs/assert/branch/master/graph/badge.svg)](https://codecov.io/gh/tinyhubs/assert)
 [![goreport](https://www.goreportcard.com/badge/github.com/tinyhubs/assert)](https://www.goreportcard.com/report/github.com/tinyhubs/assert)
 
-Package assert is a rich assertor and extensiable assert tools.
+`et` is a rich assertor and extensiable assert tools.
 
-# Sample usage
+# Installation
 
-- Step 1: Import the assert package.
+et do not required the others package.
 
-```go
-import "github.com/tinyhubs/assert"
+```bash
+$ go get -u github.com/tinyhubs/et
 ```
 
-- Step 2: Create a new Assert object at the begin of the test function.
+# Examples
 
 ```go
-expect := assert.New(t)
+package examples
+
+import (
+	"testing"
+	"github.com/tinyhubs/et/assert"
+)
+
+func TestAssert_Equal(t *testing.T) {
+	assert.Equal(t, "123", "456")
+}
+
+func TestAssert_Equali(t *testing.T) {
+	assert.Equali(t, "Expect-the-values-is-equal", "123", "456")
+}
 ```
 
-or
+The output looks like below:
 
-```go
-expect := &assert.Assert{t}
-```
+>	et-core.go:16:
+>		/Users/llj/mygithub/src/github.com/tinyhubs/et/examples/example1_test.go:9
+>		Expect:123, Actual:456
+>	et-core.go:18:
+>		/Users/llj/mygithub/src/github.com/tinyhubs/et/examples/example1_test.go:13
+>		Expect-the-values-is-equal
+>		Expect:123, Actual:456
 
-- Step 3: Use the `Equal`,`NotEqual`,`True`,`False`,`Panic`,`NoPanic` function to check your result.
-
-```go
-expect.Equal("We expect equal", "123", "456")
-```
 
 # Function
 
