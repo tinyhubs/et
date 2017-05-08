@@ -36,7 +36,7 @@ func TestAssert_Equali(t *testing.T) {
 }
 ```
 
-The output looks like below:
+The output looks like below. 每个失败的用例的第二行堆栈信息就是断言出错的的assert或者是expect的代码的位置.
 
 ```text
 	et-core.go:16:
@@ -49,6 +49,13 @@ The output looks like below:
 ```
 
 # Function
+
+为了节省打字,et提供了大量的断言函数.但是,et提供的只能满足大家通常的诉求,
+你总会遇到这些断言函数无法满足您的诉求的场景.因此,et还提供了一个扩展机制方便您扩展出自己的断言函数.
+
+## assert vs expect
+
+## Need more assert or expect functions
 
 - `Equal()` `NotEqual()` : check the two value is equal or not
 
