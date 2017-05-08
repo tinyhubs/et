@@ -38,14 +38,15 @@ func TestAssert_Equali(t *testing.T) {
 
 The output looks like below:
 
->	et-core.go:16:
->		/Users/llj/mygithub/src/github.com/tinyhubs/et/examples/example1_test.go:9
->		Expect:123, Actual:456
->	et-core.go:18:
->		/Users/llj/mygithub/src/github.com/tinyhubs/et/examples/example1_test.go:13
->		Expect-the-values-is-equal
->		Expect:123, Actual:456
-
+```text
+	et-core.go:16:
+		/Users/llj/mygithub/src/github.com/tinyhubs/et/examples/example1_test.go:9
+		Expect:123, Actual:456
+	et-core.go:18:
+		/Users/llj/mygithub/src/github.com/tinyhubs/et/examples/example1_test.go:13
+		Expect-the-values-is-equal
+		Expect:123, Actual:456
+```
 
 # Function
 
