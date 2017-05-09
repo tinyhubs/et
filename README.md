@@ -53,7 +53,120 @@ The output looks like below. 每个失败的用例的第二行堆栈信息就是
 为了节省打字,et提供了大量的断言函数.但是,et提供的只能满足大家通常的诉求,
 你总会遇到这些断言函数无法满足您的诉求的场景.因此,et还提供了一个扩展机制方便您扩展出自己的断言函数.
 
+## 基本断言
+
+- 相等检测: `assert.Equal`
+
+```go
+assert.Equal(t, "123", "456")
+```
+
+- 布尔检测: `assert.True`
+
+```go
+assert.True(t, "123" == "456")
+```
+
+- 检测是否会抛异常: `assert.Panic`
+
+```go
+assert.Panic(t, func() { /* Do nothing. */ })
+```
+
+- 检测是否匹配正则表达式: `assert.Match`
+
+```go
+assert.Match(t, `^[a-zA-Z0-9-_]+@timo\.com$`, "libbylg@126.com")
+```
+
+- 检测是否为nil: `assert.Nil`
+
+```go
+assert.Nil(t, bytes.NewBufferString(""))
+```
+
 ## assert vs expect
+
+et提供了assert和expect两套接口,所有在assert中存在的函数,except中也会存在.
+比如,assert里面有`assert.Equal`,那么也会存在`except.Equal`.
+assert系接口和expect系的接口也可以组合使用,以便实现更丰富的功能.
+
+assert和expect的区别就是assert会立即中断当前用例的执行,而expect会一直执行下去直到用例执行完毕.
+下面有个例子,注意检查行号:
+
+```go
+package examples
+
+import (
+	"testing"
+	"github.com/tinyhubs/et/expect"
+	"github.com/tinyhubs/et/assert"
+)
+
+func Test_2_Expect_Equal(t *testing.T) {
+	expect.Equal(t, "123", "456")
+	expect.Equal(t, 333, 7788)
+	expect.Equal(t, "sina", "sina")
+} //  stoped here
+
+func Test_2_Assert_Equal(t *testing.T) {
+	assert.Equal(t, "123", "456") //  stoped here
+	assert.Equal(t, 333, 7788)
+	assert.Equal(t, "sina", "sina")
+}
+```
+
+这个例子的输出如下:
+
+```
+	et-core.go:28:
+		/Users/llj/mygithub/src/github.com/tinyhubs/et/examples/example2_test.go:10
+		Expect:123, Actual:456
+	et-core.go:28:
+		/Users/llj/mygithub/src/github.com/tinyhubs/et/examples/example2_test.go:11
+		Expect:333, Actual:7788
+	et-core.go:16:
+		/Users/llj/mygithub/src/github.com/tinyhubs/et/examples/example2_test.go:16
+		Expect:123, Actual:456
+```
+
+考虑到代码的可读性,将断言的意图作为assert调用的一个参数是个很好的实践,et也支持这种用法.
+et的每个基本assert接口都支持一个`i`后缀的函数,使用这些`i`后缀的函数你可以在assert调用的时候,将你得断言意图作为调用的一个参数.
+
+比如,通常我们会这样写测试代码:
+
+```go
+//  Check the email is xxx@timo.com
+assert.Match(t, `^[a-zA-Z0-9-_]+@timo\.com$`, email)
+```
+
+但是更好的实践是这样写:
+
+```go
+assert.Matchi(t, `Check the email is xxx@timo.com`, `^[a-zA-Z0-9-_]+@timo\.com$`, email)
+```
+
+
+## 反逻辑的断言
+
+为提高断言代码的可用性,et为每个正向断言和反向断言都提供了函数. 比如:
+如果你用`assert.Equal`来检测两个数据是否相等,那么你也应该知道其实您也可以使用`assert.NotEqual`来检测两个数不相等.
+类似的还有:
+
+`assert.Equal` vs `assert.NotEqual`
+
+`assert.True` vs `assert.False`
+
+`assert.Panic` vs `assert.NoPanic`
+
+`i`系列函数也是支持的:
+
+`assert.Equali` vs `assert.NotEquali`
+
+`assert.Truei` vs `assert.Falsei`
+
+`assert.Panici` vs `assert.NoPanici`
+
 
 ## Need more assert or expect functions
 

@@ -2,6 +2,7 @@ package assert
 
 import (
 	"testing"
+	"bytes"
 )
 
 func TestAssert_Equal(t *testing.T) {
@@ -56,4 +57,21 @@ func TestAssert_NoPanici(t *testing.T) {
 	NoPanici(t, "Expect-the-func-do-not-throw-a-panic", func() {
 		throwPanic()
 	})
+}
+
+func TestAssert_Match(t *testing.T) {
+	Match(t, `^[a-zA-Z0-9-_]+@timo\.com$`, "libbylg@126.com")
+}
+
+func TestAssert_NotMatch(t *testing.T) {
+	NotMatch(t, `^[a-zA-Z0-9-_]+@[0-9]+\.com$`, "libbylg@126.com")
+}
+
+func TestAssert_Nil(t *testing.T) {
+	Nil(t, bytes.NewBufferString(""))
+}
+
+func TestAssert_NotNil(t *testing.T) {
+	var err error
+	NotNil(t, err)
 }
