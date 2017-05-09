@@ -147,7 +147,7 @@ assert.Matchi(t, `Check the email is xxx@timo.com`, `^[a-zA-Z0-9-_]+@timo\.com$`
 ```
 
 
-## 反逻辑的断言
+## Not-Assert
 
 为提高断言代码的可用性,et为每个正向断言和反向断言都提供了函数. 比如:
 如果你用`assert.Equal`来检测两个数据是否相等,那么你也应该知道其实您也可以使用`assert.NotEqual`来检测两个数不相等.
