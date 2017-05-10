@@ -256,10 +256,6 @@ AssertInrange(t, min, max, value)
 
 # et的设计和演化
 
-Maybe you found that the parameter `message` of the assert functions looks odd.
-That I planned for it. That because I'm from java. And I found that many people like to
-ignore the `message` parameter in the unit test code. But that made the code is hard to maintained.
-So, after I'm in go, I decide to force the people give a message for assert function.
 
 
 ```
@@ -284,3 +280,4 @@ So, after I'm in go, I decide to force the people give a message for assert func
 	//assert.Equalq(t, "Expect-the-values-is-equal", "123", "456")
 	//assert.Equalq(t, "Expect-the-values-is-equal", "123", "456")
 ```
+
