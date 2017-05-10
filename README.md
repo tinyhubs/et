@@ -111,7 +111,7 @@ func Test_2_Assert_Equal(t *testing.T) {
 }
 ```
 
-这个例子的输出如下:
+这个两个用例的输出结果如下:
 
 ```
 	et-core.go:28:
@@ -120,9 +120,12 @@ func Test_2_Assert_Equal(t *testing.T) {
 	et-core.go:28:
 		/Users/llj/mygithub/src/github.com/tinyhubs/et/examples/example2_test.go:11
 		Expect:333, Actual:7788
+	et-core.go:28:
+		/Users/llj/mygithub/src/github.com/tinyhubs/et/examples/example2_test.go:12
+		Expect:sina, Actual:google
 	et-core.go:16:
 		/Users/llj/mygithub/src/github.com/tinyhubs/et/examples/example2_test.go:16
-		Expect:123, Actual:456
+		Expect:mtn, Actual:rnd
 ```
 
 ## 断言意图作为代码
@@ -247,7 +250,7 @@ assertInrange(t, min, max, value)
 		Expect in range [1, 100], Actual: 320
 ```
 
-您可以在[et/examples/example3_test.go](et/examples/example3_test.go)查看这个完整的扩展的示例,您可以试着运行下diamante看看效果.
+您可以在[`et/examples/example3_test.go`](et/examples/example3_test.go)查看这个完整的扩展的示例,您可以试着运行下diamante看看效果.
 
 如果您觉得自己开发了一个很不错的扩展,请必要忘记分享给你周边的同事,如果觉得您的扩展可以帮到更多人,那么直接发一个pull request给我吧,或许我可以合并到et中去.
 
