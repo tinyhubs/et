@@ -7,7 +7,7 @@
 [![codecov](https://codecov.io/gh/tinyhubs/assert/branch/master/graph/badge.svg)](https://codecov.io/gh/tinyhubs/assert)
 [![goreport](https://www.goreportcard.com/badge/github.com/tinyhubs/assert)](https://www.goreportcard.com/report/github.com/tinyhubs/assert)
 
-`et` 全名是`EasyTest`,它是一个有着丰富断言机制断言库.而且当默认提供的断言函数不够用时,你可以轻易地扩展出自己的断言函数.
+`et` 全名是`EasyTest`,它是一个有着丰富断言函数的且可扩展的测试辅助库.
 
 # 安装
 
