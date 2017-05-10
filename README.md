@@ -87,8 +87,7 @@ et提供了assert和expect两套接口,所有在assert中存在的函数,except�
 比如,assert里面有`assert.Equal`,那么也会存在`except.Equal`.
 assert系接口和expect系的接口也可以组合使用,以便实现更丰富的功能.
 
-assert和expect的区别就是assert会立即中断当前用例的执行,而expect会一直执行下去直到用例执行完毕.
-下面有个例子,注意检查行号:
+assert和expect的区别就是assert会立即中断当前用例的执行,而expect会一直执行下去直到用例执行完毕:
 
 ```go
 package examples
