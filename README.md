@@ -239,7 +239,7 @@ func AssertInrange(t *testing.T, min int, max int, value int) {
 然后,方式1中的实例代码可以改成下面这样:
 
 ```go
-assertInrange(t, min, max, value)
+AssertInrange(t, min, max, value)
 ```
 
 输出结果如下,和方式1的输出结果相同:

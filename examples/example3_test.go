@@ -27,15 +27,13 @@ func Test_mycase1(t *testing.T) {
 	et.Assert(&Inrange{min, max, value}, t)
 }
 
-
-func assertInrange(t *testing.T, min int, max int, value int) {
+func AssertInrange(t *testing.T, min int, max int, value int) {
 	et.AssertInner(t, "", &Inrange{min, max, value}, 2)
 }
-
 
 func Test_mycase2(t *testing.T) {
 	min := 1
 	max := 100
 	value := 320
-	assertInrange(t, min, max, value)
+	AssertInrange(t, min, max, value)
 }
