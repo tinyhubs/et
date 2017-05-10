@@ -33,10 +33,19 @@ func ExpectInner(t *testing.T, message string, assertor Assertor, callerSkip int
 	}
 }
 
-func Assert(assertor Assertor, t *testing.T, message string) {
+func Assert(assertor Assertor, t *testing.T) {
+	AssertInner(t, "", assertor, 2)
+}
+
+
+func Asserti(assertor Assertor, t *testing.T, message string) {
 	AssertInner(t, message, assertor, 2)
 }
 
-func Expect(assertor Assertor, t *testing.T, message string) {
+func Expect(assertor Assertor, t *testing.T) {
+	ExpectInner(t, "", assertor, 2)
+}
+
+func Expecti(assertor Assertor, t *testing.T, message string) {
 	ExpectInner(t, message, assertor, 2)
 }
