@@ -83,7 +83,7 @@ assert.Nil(t, bytes.NewBufferString(""))
 
 ## assert vs expect
 
-et提供了assert和expect两套接口,所有在assert中存在的函数,except中也会存在.
+`et`提供了assert和expect两套接口,所有在assert中存在的函数,except中也会存在.
 比如,assert里面有`assert.Equal`,那么也会存在`except.Equal`.
 assert系接口和expect系的接口也可以组合使用,以便实现更丰富的功能.
 
@@ -130,20 +130,16 @@ func Test_2_Assert_Equal(t *testing.T) {
 
 ## 断言意图作为代码
 
-测试代码也需要良好的维护性,但是大家写测试代码的时候往往只能在断言代码附近写上注释来表达断言的意图.
-但是,注释是很容易失去维护,所以如果能将断言的意图作为assert调用的一个参数那么大家修改测试代码时就不会再忽略掉了.
-这是一个很好的实践,et也支持这种用法.
-
-et的每个基本assert接口都支持一个`i`后缀的函数,使用这些`i`后缀的函数你可以在assert调用的时候,将你得断言意图作为调用的一个参数.
-
-比如,通常我们会这样写测试代码,注释放在assert函数调用的注释里面:
+测试代码也需要良好的可维护性,所以大家写测试代码的时候往往会在断言代码附近写上注释来表达断言的意图.如下所示:
 
 ```go
 //  Check the email is xxx@timo.com
 assert.Match(t, `^[a-zA-Z0-9-_]+@timo\.com$`, email)
 ```
 
-但是更好的实践是直接将上面的注释写到断言函数参数里面:
+但注释毕竟不是代码,难以得到开发人员的爱,很容易失去维护,所以如果能将断言的意图作为assert函数的一个参数,那么大家修改测试代码时就不会再忽略掉了.
+这是一个很好的实践,`et`也支持这种用法.`et`的每个基本assert接口都支持一个`i`后缀的函数,使用这些`i`后缀的函数你可以在调用assert函数的时候,附上断言的意图.
+如下所示,我们可以利用`et`的`i`系列函数将前面这个代码改成下面这样:
 
 ```go
 assert.Matchi(t, "Check the email is xxx@timo.com", `^[a-zA-Z0-9-_]+@timo\.com$`, email)
