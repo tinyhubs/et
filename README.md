@@ -218,7 +218,7 @@ et.Assert(&Inrange{min, max, value}, t)
 如果触发了断言失败,可以获得下面的结果,注意看第二行提示,这个就是我们Assertor返回的error哦:
 
 ```
-et-core.go:16:
+	et-core.go:16:
 		/Users/llj/mygithub/src/github.com/tinyhubs/et/examples/example3_test.go:27
 		Expect in range [1, 100], Actual: 320
 ```
@@ -250,7 +250,7 @@ assertInrange(t, min, max, value)
 		Expect in range [1, 100], Actual: 320
 ```
 
-您可以在[`et/examples/example3_test.go`](https://github.com/tinyhubs/et/examples/example3_test.go)查看这个完整的扩展的示例,您可以试着运行下diamante看看效果.
+您可以在[`et/examples/example3_test.go`](https://github.com/tinyhubs/et/tree/master/examples/example3_test.go)查看这个完整的扩展的示例,您可以试着运行下diamante看看效果.
 
 如果您觉得自己开发了一个很不错的扩展,请必要忘记分享给你周边的同事,如果觉得您的扩展可以帮到更多人,那么直接发一个pull request给我吧,或许我可以合并到et中去.
 
