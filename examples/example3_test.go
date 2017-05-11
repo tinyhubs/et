@@ -37,3 +37,4 @@ func Test_mycase2(t *testing.T) {
 	value := 320
 	AssertInrange(t, min, max, value)
 }
+

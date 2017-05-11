@@ -250,11 +250,13 @@ AssertInrange(t, min, max, value)
 
 如果您觉得自己开发了一个很不错的扩展,请必要忘记分享给你周边的同事,如果觉得您的扩展可以帮到更多人,那么直接发一个pull request给我吧,或许我可以合并到et中去.
 
-# et的设计和演化
+# `et`的设计和演化
 
-## 起步: 我不想写t参数
+## 初衷:看着舒服少打字
 
 `et`最初的设计初衷有两个,一个是我不想写那么多if,我希望断言的代码看起来很简介一行搞定.另外一个原因是我不想写t参数.
+综合来说就是想看起来舒服且少打点字.
+
 举个例子,我当时就想这样写测试代码:
 
 ```go
@@ -275,6 +277,8 @@ func TestAssert_NotEqual(t *testing.T) {
 	assert.NotEqual("Expect-the-values-is-not-equal", "123", "123")
 }
 ```
+
+## 支持except
 
 接着,我在使用我自己做的[properties](https://github.com/tinyhubs/properties)库和[tinydom](https://github.com/tinyhubs/tinydom)库
 写一个开发辅助工具的时候,我发现`except`对我帮助更大,这样我的用例如果有什么bug测试用例能够尽可能多地帮我检测出来.
@@ -325,6 +329,8 @@ import (
 
 这个我觉得没关系,因为现在的IDE都很智能,IDE自动会帮我写上这段import代码的.
 
+## `i`系函数与测试代码的可维护性
+
 这样过了一段时间,又一次我发现一个bug,于是我回朔我的UT代码,然后有一个用例我看不懂了.
 原因是代码中的注释和下面的断言的代码看起来有点矛盾,我不知道那个才是我最初的目的----到底是注释是对的呢,还是代码是对的呢?
 总之,我发现我的单元测试代码中的注释慢慢失修了.我修改测试代码的时候不一定会关注到注释,因为注释在我的IDE里面显示的是灰色的,IDE都在暗示我忽略注释呢.
@@ -335,10 +341,10 @@ import (
 最初,我修改了所有的assert函数,这样代码就写成这样了:
 
 ```go
-	assert.True(t, "获得Text对象成功", nil != text1)
-	assert.True(t, "获得Text对象成功", nil != text2)
-	assert.True(t, "获得Text对象成功", nil != text3)
-	assert.True(t, "全空白的Text不会被读取", nil == text4)
+assert.True(t, "获得Text对象成功", nil != text1)
+assert.True(t, "获得Text对象成功", nil != text2)
+assert.True(t, "获得Text对象成功", nil != text3)
+assert.True(t, "全空白的Text不会被读取", nil == text4)
 ```
 
 为此我同事修改了多有的测试代码中的assert或者except调用.
@@ -350,10 +356,10 @@ import (
 于是,我就想是否有办法当我们需要写注解的时候就写上,但是不需要的时候不写也没问题,比如下面这些代码:
 
 ```go
-	assert.True(t, "获得Text对象成功", nil != text1)
-	assert.True(t, nil != text2)
-	assert.True(t, nil != text3)
-	assert.True(t, "全空白的Text不会被读取", nil == text4)
+assert.True(t, "获得Text对象成功", nil != text1)
+assert.True(t, nil != text2)
+assert.True(t, nil != text3)
+assert.True(t, "全空白的Text不会被读取", nil == text4)
 ```
 
 可惜go语言好像支持不了啊,go语言的函数的签名是固定的,像上面的`except.True`其第二个参数不能一会儿是字符串一会儿又是bool----
@@ -362,36 +368,36 @@ import (
 不过go语言里面变参是支持的,所以我们可以将这个字符串放后面:
 
 ```go
-	assert.True(t, nil != text1, "获得Text对象成功")
-	assert.True(t, nil != text2, "")
-	assert.True(t, nil != text3, "")
-	assert.True(t, nil == text4, "全空白的Text不会被读取")
+assert.True(t, nil != text1, "获得Text对象成功")
+assert.True(t, nil != text2, "")
+assert.True(t, nil != text3, "")
+assert.True(t, nil == text4, "全空白的Text不会被读取")
 ```
 
 看起来也不错!而且,利用可变参数上面的代码可以写成这样:
 
 ```go
-	assert.True(t, nil != text1, "获得Text对象成功")
-	assert.True(t, nil != text2)
-	assert.True(t, nil != text3)
-	assert.True(t, nil == text4, "全空白的Text不会被读取")
+assert.True(t, nil != text1, "获得Text对象成功")
+assert.True(t, nil != text2)
+assert.True(t, nil != text3)
+assert.True(t, nil == text4, "全空白的Text不会被读取")
 ```
 
 OK,很完美!但是,没过多久我实现了`assert.Panic`和`assert.NoPanic`两个新函数,在写一个`assert.NoPanic`的调用样例的时候,又觉得不舒服了:
 
 ```go
-	assert.NoPanic(t, func() {
-		throwPanic()
-	}, "Expect-the-func-do-not-throw-a-panic")
+assert.NoPanic(t, func() {
+    throwPanic()
+}, "Expect-the-func-do-not-throw-a-panic")
 ```
 
 这个例子好丑啊,func()后面这个字符串就像是一只苗条的猫长了一条鳄鱼的粗壮尾巴.所以,我最终还是觉得写成下面这样,代码看起来会更舒服点:
 
 ```go
-	assert.NoPanic(t, "Expect-the-func-do-not-throw-a-panic",
-	func() {
-		throwPanic()
-	})
+assert.NoPanic(t, "Expect-the-func-do-not-throw-a-panic",
+func() {
+    throwPanic()
+})
 ```
 
 将注解放在assert函数的最后作为变参还有一些不好的地方,因为函数原型最后都成为了变长的了,开发人员看到assert函数的原型对于理解这个assert的用法会产生疑惑.
@@ -414,8 +420,8 @@ printf("%s", mystr);
 我觉得我的assert库可以采用同样的机制:
 
 ```go
-	assert.TrueXXX(t, "获得Text对象成功", nil != text1)
-	assert.True(t, nil != text2)
+assert.TrueXXX(t, "获得Text对象成功", nil != text1)
+assert.True(t, nil != text2)
 ```
 
 OK,那么这个XXX到底应该是啥?
@@ -427,10 +433,10 @@ OK,那么这个XXX到底应该是啥?
 以他们的首字母放在最后看起来是这样的:
 
 ```
-	//assert.Equalm(t, "Expect-the-values-is-equal", "123", "456")
-	//assert.Equalt(t, "Expect-the-values-is-equal", "123", "456")
-	//assert.Emptyn(t, "Expect-the-values-is-equal", "123", "456")
-	//assert.Emptyi(t, "Expect-the-values-is-equal", "123", "456")
+assert.Equalm(t, "Expect-the-values-is-equal", "123", "456")
+assert.Equalt(t, "Expect-the-values-is-equal", "123", "456")
+assert.Emptyn(t, "Expect-the-values-is-equal", "123", "456")
+assert.Emptyi(t, "Expect-the-values-is-equal", "123", "456")
 ```
 
 `m` `t` `n`者三个字符很容易融入到原始单词里面去,比如一言看上去似乎`qualm` `qualt` `mptyn`是一个单词.
@@ -438,4 +444,60 @@ OK,那么这个XXX到底应该是啥?
 而`m` `t` `n` 在单词里面见得很多,特别是以`t`和`n`为后缀的单词相当多.
 
 看起来`Emptyi`是比较不错的选择,i系列函数就是这么诞生的.
+
+## 一致性与扩展能力的交汇
+
+`et`最初只提供了`Equal`,`True`,`Panic`以及反逻辑的`NotEqual`,`False`,`NoPanic`这几个函数.但是,很快我发现我还需要增加判断是否为nil,
+以及正则表达式匹配的断言函数.此时,我开始意识到虽然`True`,`False`其实可以搞定一切,但是断言的提示信息却很不好.
+
+下面这两个用例,断言逻辑其实一模一样,但是其断言错误提示却差别很大:
+
+```go
+func Test_output1(t *testing.T) {
+	assert.Equal(t, 111, 222)
+}
+
+func Test_output2(t *testing.T) {
+	assert.True(t, 111 == 222)
+}
+```
+
+`Test_output1`的输出如下:
+
+```
+	et-core.go:16:
+		/Users/llj/mygithub/src/github.com/tinyhubs/et/examples/example4_test.go:9
+		Expect:111, Actual:222
+```
+`Test_output2`的输出如下:
+```
+	et-core.go:16:
+		/Users/llj/mygithub/src/github.com/tinyhubs/et/examples/example4_test.go:13
+		Expect:true, Actual:false
+```
+
+很明显`Test_output1`的输出对我们的帮助更大,`Test_output2`几乎没有提供额外的价值信息.
+所以,总结来说,我们还是应该提供针对某种类型的断言的专用函数,而不是使用笼统的`assert.True`或者`assert.False`来凑活.
+
+但对于一个程序库(`et`)的作者,我没法遇见到其他人需要什么样的断言函数,我甚至都不知道自己未来需要什么断言函数.
+所以,`et`库支持各种不同的断言检测逻辑是很有意义的.
+
+所以,将原库的代码拆分成了三个部分:`et`,`assert`,`expect`. `et`是核心,`et-core.go`里面定义了统一的断言函数的调用形式,封装了获取代码堆栈的逻辑.
+并提供了一个`Assertor`接口,`et`默认支持的`Assertor`定义在`et-ext.go`文件中.`assert`包和`expect`包是两种基于`et`做的封装.
+基本上前面的绝大多数例子中调用的断言函数都是来自这两个包.
+
+`et`遵循下面的调用约定:
+
+1. 一个断言检测支持三种调用形式:
+
+- `et.Assert`  按扩展库的方式调用
+- `assert.XXX` 通常用到的断言函数
+- `expect.XXX` except断言模式
+
+2. 如果断言函数的第一个参数总是t,除了扩展模式
+
+3. 带`i`后缀的函数都支持一个额外的字符串参数,该参数总是在`t`参数的后面.
+
+
+
 
