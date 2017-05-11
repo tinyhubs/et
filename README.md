@@ -7,7 +7,7 @@
 [![codecov](https://codecov.io/gh/tinyhubs/assert/branch/master/graph/badge.svg)](https://codecov.io/gh/tinyhubs/assert)
 [![goreport](https://www.goreportcard.com/badge/github.com/tinyhubs/assert)](https://www.goreportcard.com/report/github.com/tinyhubs/assert)
 
-`et` 全名是`EasyTest`,它是一个有着丰富断言函数的且可扩展的测试辅助库.
+`et` 全名是`EasyTest`,它是一个有着丰富断言函数的,可扩展的单元测试辅助库.
 
 # 安装
 
@@ -252,28 +252,190 @@ AssertInrange(t, min, max, value)
 
 # et的设计和演化
 
+## 起步: 我不想写t参数
 
+`et`最初的设计初衷有两个,一个是我不想写那么多if,我希望断言的代码看起来很简介一行搞定.另外一个原因是我不想写t参数.
+举个例子,我当时就想这样写测试代码:
+
+```go
+assert.Equal(a, b)
+```
+
+很明显我是有java或者c语言背景的人.这里的assert其实是个对象,assert对象内部包含了一个t参数.我很快就做了这么个原型assert库.
+完整的例子大概是这样:
+
+```go
+func TestAssert_Equal(t *testing.T) {
+	assert := &Assert{T: t}
+	assert.Equal("Expect-the-values-is-equal", "123", "456")
+}
+
+func TestAssert_NotEqual(t *testing.T) {
+	assert := New(t)
+	assert.NotEqual("Expect-the-values-is-not-equal", "123", "123")
+}
+```
+
+接着,我在使用我自己做的[properties](https://github.com/tinyhubs/properties)库和[tinydom](https://github.com/tinyhubs/tinydom)库
+写一个开发辅助工具的时候,我发现`except`对我帮助更大,这样我的用例如果有什么bug测试用例能够尽可能多地帮我检测出来.
+但是,我总不能再new一个Except对象出来吧?所以我就想到是不是一次性New两个对象出来:
+
+```go
+func TestAssert_NotEqual(t *testing.T) {
+	assert, except := New(t)
+	except.NotEqual("Expect-the-values-is-not-equal", 333, 444)
+	assert.NotEqual("Expect-the-values-is-not-equal", "123", "123")
+}
+```
+
+这个办法初看起来也挺美好的,因为使用者可以根据需要自己决定New出的对象用哪一个,也就是你可以有下面三种情况自由组合:
+
+```go
+_, except := New(t)       //  只使用except
+assert, _ := New(t)       //  只使用assert
+assert, except := New(t)  //  同时使用except和assert
+```
+
+这样设计,看起来没大毛病.但是我总觉得有点疙里疙瘩的.因为个方案要求在每个`Test_xxx`函数入口的地方都要`New`一个`Assert`对象甚至额外的`Except`对象.
+我在一个项目里面自己试用了一下,然后又感觉每次都要`New`这么个对象显得好蠢.
+其实,我之所要`New`对象就是为了少写个`t`,但是光`_, assert := New(t)`这一句敲的字都相当于敲十几个`t`了.
+似乎更不划算.
+
+由于google的设计里面,t就一个字符,所以在一个assert调用里面,t字符显得并不那么突出,所以我就放弃了少写t这个愿望----虽然t也不爽.
+于是,我就重新设计了`assert`库,代码可以直接这样写:
+
+```go
+assert.Equal(t, a, b)
+```
+
+这里assert是包名,为了支持except,我还实现了一个except包,所以我们也可以这样写:
+
+```go
+except.Equal(t, a, b)
+```
+
+您或许会发现,except如果是另外一个package,那不是要import两个:
+
+```go
+import (
+    "github.com/tinyhubs/et/assert"
+    "github.com/tinyhubs/et/except"
+)
+```
+
+这个我觉得没关系,因为现在的IDE都很智能,IDE自动会帮我写上这段import代码的.
+
+这样过了一段时间,又一次我发现一个bug,于是我回朔我的UT代码,然后有一个用例我看不懂了.
+原因是代码中的注释和下面的断言的代码看起来有点矛盾,我不知道那个才是我最初的目的----到底是注释是对的呢,还是代码是对的呢?
+总之,我发现我的单元测试代码中的注释慢慢失修了.我修改测试代码的时候不一定会关注到注释,因为注释在我的IDE里面显示的是灰色的,IDE都在暗示我忽略注释呢.
+
+所以,我想是否有办法让我修改代码的时候能够对一些非常重要的断言做一些说明,但是我一定以注释的形式体现?
+于是,我想到了将注释信息填写到assert语句中的方法.
+
+最初,我修改了所有的assert函数,这样代码就写成这样了:
+
+```go
+	assert.True(t, "获得Text对象成功", nil != text1)
+	assert.True(t, "获得Text对象成功", nil != text2)
+	assert.True(t, "获得Text对象成功", nil != text3)
+	assert.True(t, "全空白的Text不会被读取", nil == text4)
+```
+
+为此我同事修改了多有的测试代码中的assert或者except调用.
+
+然而,我又发现一个新问题,assert函数里面,如果带上一个参数看起来确实要好很多,可维护性非常好.
+但是,有时候写断言意图(下称"注解")的时间也比较麻烦,甚至很多语句干事情类似存在大量重复,比如上面这段代码里面前三个注解都一样.
+所以,咱们干么这么愚蠢地写相同的注解呢?
+
+于是,我就想是否有办法当我们需要写注解的时候就写上,但是不需要的时候不写也没问题,比如下面这些代码:
+
+```go
+	assert.True(t, "获得Text对象成功", nil != text1)
+	assert.True(t, nil != text2)
+	assert.True(t, nil != text3)
+	assert.True(t, "全空白的Text不会被读取", nil == text4)
+```
+
+可惜go语言好像支持不了啊,go语言的函数的签名是固定的,像上面的`except.True`其第二个参数不能一会儿是字符串一会儿又是bool----
+真怀恋C++的函数重载和模板机制.
+
+不过go语言里面变参是支持的,所以我们可以将这个字符串放后面:
+
+```go
+	assert.True(t, nil != text1, "获得Text对象成功")
+	assert.True(t, nil != text2, "")
+	assert.True(t, nil != text3, "")
+	assert.True(t, nil == text4, "全空白的Text不会被读取")
+```
+
+看起来也不错!而且,利用可变参数上面的代码可以写成这样:
+
+```go
+	assert.True(t, nil != text1, "获得Text对象成功")
+	assert.True(t, nil != text2)
+	assert.True(t, nil != text3)
+	assert.True(t, nil == text4, "全空白的Text不会被读取")
+```
+
+OK,很完美!但是,没过多久我实现了`assert.Panic`和`assert.NoPanic`两个新函数,在写一个`assert.NoPanic`的调用样例的时候,又觉得不舒服了:
+
+```go
+	assert.NoPanic(t, func() {
+		throwPanic()
+	}, "Expect-the-func-do-not-throw-a-panic")
+```
+
+这个例子好丑啊,func()后面这个字符串就像是一只苗条的猫长了一条鳄鱼的粗壮尾巴.所以,我最终还是觉得写成下面这样,代码看起来会更舒服点:
+
+```go
+	assert.NoPanic(t, "Expect-the-func-do-not-throw-a-panic",
+	func() {
+		throwPanic()
+	})
+```
+
+将注解放在assert函数的最后作为变参还有一些不好的地方,因为函数原型最后都成为了变长的了,开发人员看到assert函数的原型对于理解这个assert的用法会产生疑惑.
+
+再者,我当时正在考虑设计我的assert库可扩展能力,如果将注解放在函数的后面会导致大家扩展出来的新的断言函数的原型会跟我的assert库自带的assert函数的原型不一致,
+这种不一致会加大大家的学习难度.
+
+后来,我想到了go语言的fmt包以及c语言的库,他们有这样的用法:
+
+```go
+fmt.Printf("%s", mystr)
+```
+
+```c
+printf("%s", mystr);
+```
+
+他们都是在基本核心单词的基础上增加简短的后缀来表明函数和同系列的函数的区别的.
+
+我觉得我的assert库可以采用同样的机制:
+
+```go
+	assert.TrueXXX(t, "获得Text对象成功", nil != text1)
+	assert.True(t, nil != text2)
+```
+
+OK,那么这个XXX到底应该是啥?
+
+`f`? No,这个f是format的意思,并不是一个注解.那么那个单词可以表达注解?
+
+`message`, `tips`, `notice`, `information` ...
+
+以他们的首字母放在最后看起来是这样的:
 
 ```
-	//assert(t, "Expect-the-values-is-equal").Equal("123", "456")
-	//
-	//assert.Equal(t, "Expect-the-values-is-equal", "123", "456")
-	//
-	//assert.Equal("123", "456", t, "Expect-the-values-is-equal")
-	//
-	//assert.Equal(t, "123", "456")
-	//assert.Equalf(t, "123", "456", "Expect-the-values-is-equal")
-	//
-	//assert.Equal(t, "123", "456")
-	//assert.Equalr(t, "Expect-the-values-is-equal", "123", "456")
-	//assert.Equali(t, "Expect-the-values-is-equal", "123", "456")
+	//assert.Equalm(t, "Expect-the-values-is-equal", "123", "456")
+	//assert.Equalt(t, "Expect-the-values-is-equal", "123", "456")
+	//assert.Emptyn(t, "Expect-the-values-is-equal", "123", "456")
 	//assert.Emptyi(t, "Expect-the-values-is-equal", "123", "456")
-	//assert.NoPanicr(t, "Expect-the-values-is-equal", "123", "456")
-
-	//assert.Equal(t, "Expect-the-values-is-equal", "123", "456")
-	//assert.Equalh(t, "Expect-the-values-is-equal", "123", "456")
-	//assert.Equalp(t, "Expect-the-values-is-equal", "123", "456")
-	//assert.Equalq(t, "Expect-the-values-is-equal", "123", "456")
-	//assert.Equalq(t, "Expect-the-values-is-equal", "123", "456")
 ```
+
+`m` `t` `n`者三个字符很容易融入到原始单词里面去,比如一言看上去似乎`qualm` `qualt` `mptyn`是一个单词.
+好吧他们亲和力真强. `Printf`里面的`f`之所以亲和力没那么强是因为`f`通常作为单词的开头,很少有单词以f结尾,而且`f`在英文中看起来很瘦长,总是跟其他的字母不搭调.
+而`m` `t` `n` 在单词里面见得很多,特别是以`t`和`n`为后缀的单词相当多.
+
+看起来`Emptyi`是比较不错的选择,i系列函数就是这么诞生的.
 
