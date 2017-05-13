@@ -113,7 +113,7 @@ func Test_2_Assert_Equal(t *testing.T) {
 
 这个两个用例的输出结果如下:
 
-```
+```text
 	et-core.go:28:
 		/Users/llj/mygithub/src/github.com/tinyhubs/et/examples/example2_test.go:10
 		Expect:123, Actual:456
@@ -213,7 +213,7 @@ et.Assert(&Inrange{min, max, value}, t)
 
 如果触发了断言失败,可以获得下面的结果,注意看第二行提示,这个就是我们Assertor返回的error哦:
 
-```
+```text
 	et-core.go:16:
 		/Users/llj/mygithub/src/github.com/tinyhubs/et/examples/example3_test.go:27
 		Expect in range [1, 100], Actual: 320
@@ -240,7 +240,7 @@ AssertInrange(t, min, max, value)
 
 输出结果如下,和方式1的输出结果相同:
 
-```
+```text
 	et-core.go:16:
 		/Users/llj/mygithub/src/github.com/tinyhubs/et/examples/example3_test.go:40
 		Expect in range [1, 100], Actual: 320
@@ -414,7 +414,7 @@ func() {
 fmt.Printf("%s", mystr)
 ```
 
-```c
+```cpp
 printf("%s", mystr);
 ```
 
@@ -423,19 +423,19 @@ printf("%s", mystr);
 我觉得我的assert库可以采用同样的机制:
 
 ```go
-assert.TrueXXX(t, "获得Text对象成功", nil != text1)
+assert.TrueXX(t, "获得Text对象成功", nil != text1)
 assert.True(t, nil != text2)
 ```
 
-OK,那么这个XXX到底应该是啥?
+OK,那么这个XX应该设计为啥?
 
-`f`? No,这个f是format的意思,并不是一个注解.那么那个单词可以表达注解?
+`f`? No,`f`是`format`的意思,跟注解不沾边.那么哪个单词可以表达注解?
 
 `message`, `tips`, `notice`, `information` ...
 
 以他们的首字母放在最后看起来是这样的:
 
-```
+```go
 assert.Equalm(t, "Expect-the-values-is-equal", "123", "456")
 assert.Equalt(t, "Expect-the-values-is-equal", "123", "456")
 assert.Emptyn(t, "Expect-the-values-is-equal", "123", "456")
@@ -446,12 +446,12 @@ assert.Emptyi(t, "Expect-the-values-is-equal", "123", "456")
 好吧他们亲和力真强. `Printf`里面的`f`之所以亲和力没那么强是因为`f`通常作为单词的开头,很少有单词以f结尾,而且`f`在英文中看起来很瘦长,总是跟其他的字母不搭调.
 而`m` `t` `n` 在单词里面见得很多,特别是以`t`和`n`为后缀的单词相当多.
 
-看起来`Emptyi`是比较不错的选择,i系列函数就是这么诞生的.
+看起来`Emptyi`是比较不错的选择,`i`系列函数就是这么诞生的.
 
-## 一致性与扩展能力的交汇
+## 扩展能力的设计
 
 `et`最初只提供了`Equal`,`True`,`Panic`以及反逻辑的`NotEqual`,`False`,`NoPanic`这几个函数.但是,很快我发现我还需要增加判断是否为nil,
-以及正则表达式匹配的断言函数.此时,我开始意识到虽然`True`,`False`其实可以搞定一切,但是断言的提示信息却很不好.
+以及正则表达式匹配的断言函数.此时,我开始意识到,虽然`assert.True`,`assert.False`可以搞定一切,但是断言的提示信息并不友好.
 
 下面这两个用例,断言逻辑其实一模一样,但是其断言错误提示却差别很大:
 
@@ -467,13 +467,15 @@ func Test_output2(t *testing.T) {
 
 `Test_output1`的输出如下:
 
-```
+```text
 	et-core.go:16:
 		/Users/llj/mygithub/src/github.com/tinyhubs/et/examples/example4_test.go:9
 		Expect:111, Actual:222
 ```
+
 `Test_output2`的输出如下:
-```
+
+```text
 	et-core.go:16:
 		/Users/llj/mygithub/src/github.com/tinyhubs/et/examples/example4_test.go:13
 		Expect:true, Actual:false
@@ -482,14 +484,39 @@ func Test_output2(t *testing.T) {
 很明显`Test_output1`的输出对我们的帮助更大,`Test_output2`几乎没有提供额外的价值信息.
 所以,总结来说,我们还是应该提供针对某种类型的断言的专用函数,而不是使用笼统的`assert.True`或者`assert.False`来凑活.
 
-但对于一个程序库(`et`)的作者,我没法遇见到其他人需要什么样的断言函数,我甚至都不知道自己未来需要什么断言函数.
+但对于一个程序库(`et`)的作者,我没法预见到其他人需要什么样的断言函数,我甚至都不知道自己未来需要什么断言函数.
 所以,`et`库支持各种不同的断言检测逻辑是很有意义的.
 
-所以,将原库的代码拆分成了三个部分:`et`,`assert`,`expect`. `et`是核心,`et-core.go`里面定义了统一的断言函数的调用形式,封装了获取代码堆栈的逻辑.
+所以,将原库的代码拆分成了三个部分:`et`,`assert`,`expect`. `et`是核心,`et-core.go`里面定义了统一的断言函数的调用形式,
+封装了获取代码堆栈的逻辑.
 并提供了一个`Assertor`接口,`et`默认支持的`Assertor`定义在`et-ext.go`文件中.`assert`包和`expect`包是两种基于`et`做的封装.
 基本上前面的绝大多数例子中调用的断言函数都是来自这两个包.
 
-`et`遵循下面的调用约定:
+最先被抽象出来的是`et.AssertInner`这是转给扩展断言库的作者使用的.它主要的作用就是使用统一的格式输出断言结果.同时,也是为了扩展库的
+作者不必太过关心获取调用堆栈这些细节.
+为此,`et.AssertInner`函数有一个额外的`callerSkip`参数,用于帮助`et`库确定需要跳过多少层堆栈.
+如果我们提供的断言函数不是被封装很多层,那么`callerSkip`就永远是`2`.
+对于写断言扩展的同学来说,确定你提供给用户的是那一层的接口是非常重要的,这可以有效减少学习成本.所以,我建议永远只在`et.AssertInner`之上
+包装一层.
+
+`et.Assert`,`et.Expect`者两个是随后抽象出来的.最初,我并不想提供这两个函数,但是我在自己写一些定制的断言函数的时候,我发现有些定制的
+断言函数的使用频率并不是很高,通用化的意义也不大,所以我不向去做`AssertInRange`这样的二次封装.但是我又不能直接在断言代码中调用
+`et.AssertInner`.所以,提供`et.Assert`,`et.Expect`,`et.Asserti`,`et.Expecti`这四个函数可以让我在懒惰一点:).
+
+在扩展库的设计上,`et`力求平衡`使用感知`与`代码美观度`.
+
+如下者几行代码,看起来还是有点差异,但是他们的共同特点就是`assert`总是与`Equal`靠近.
+
+```go
+assert.Equal(t, a, b)
+assert.Equali(t, "message", a, b)
+et.Assert(&Equal{a, b}, t)
+AssertEqual(t, a, b)
+```
+
+再比如,`i`系函数里面,`message`总是在`t`的后面,即使是`et.AssertInner`,`et.Asserti`也不例外.
+
+下面列出了`et`所遵循的设计约定:
 
 1. 一个断言检测支持三种调用形式:
 
@@ -501,6 +528,20 @@ func Test_output2(t *testing.T) {
 
 3. 带`i`后缀的函数都支持一个额外的字符串参数,该参数总是在`t`参数的后面.
 
+4. `Assert`总是应该与断言的类型靠近
+
+5. 断言函数或者`Assertor`的预期值总是在被检测值得前面
+
+
+## 其他:断言库改名
+
+`et`库最早其实叫`assert`,但是后来在支持扩展能力的时候,我发现必须这样写:
+
+```go
+assert.Assert(&InRange{a, b, v}, t)
+```
+
+很明显`assert.Assert`这种写法挺拉杂,为了最小化打字数量,就改名为`et`了,其含义是`Easy Test`.
 
 
 
