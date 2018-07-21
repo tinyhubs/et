@@ -85,18 +85,22 @@ func NotMatchi(t *testing.T, msg string, regex string, got string) {
 	et.AssertInner(t, msg, &et.NotMatch{regex, got}, 2)
 }
 
+// Nil expect the got be nil.
 func Nil(t *testing.T, got interface{}) {
 	et.AssertInner(t, "", &et.Nil{got}, 2)
 }
 
+// Nili is same with NotMatch but a need msg to express your intention.
 func Nili(t *testing.T, msg string, got interface{}) {
 	et.AssertInner(t, msg, &et.Nil{got}, 2)
 }
 
+// NotNil expect the got be not nil.
 func NotNil(t *testing.T, got interface{}) {
 	et.AssertInner(t, "", &et.NotNil{got}, 2)
 }
 
+// NotNili is same with NotNil but a need msg to express your intention.
 func NotNili(t *testing.T, msg string, got interface{}) {
 	et.AssertInner(t, msg, &et.NotNil{got}, 2)
 }

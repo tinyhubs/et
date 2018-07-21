@@ -39,7 +39,7 @@ func False(t *testing.T, got bool) {
 	et.ExpectInner(t, "", &et.False{got}, 2)
 }
 
-// False is used to check the got be false.
+// Falsei is used to check the got be false.
 func Falsei(t *testing.T, message string, got bool) {
 	et.ExpectInner(t, message, &et.False{got}, 2)
 }
@@ -49,7 +49,7 @@ func Panic(t *testing.T, fn func()) {
 	et.ExpectInner(t, "", &et.Panic{fn}, 2)
 }
 
-// Panic is used to check the fn should give a panic.
+// Panici is used to check the fn should give a panic.
 func Panici(t *testing.T, message string, fn func()) {
 	et.ExpectInner(t, message, &et.Panic{fn}, 2)
 }
@@ -69,7 +69,7 @@ func Match(t *testing.T, regex string, got string) {
 	et.ExpectInner(t, "", &et.Match{regex, got}, 2)
 }
 
-// Match is used to check the got is match to the regular expression of exp.
+// Matchi is used to check the got is match to the regular expression of exp.
 func Matchi(t *testing.T, message string, regex string, got string) {
 	et.ExpectInner(t, message, &et.Match{regex, got}, 2)
 }
