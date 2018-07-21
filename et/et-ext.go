@@ -13,7 +13,7 @@ type Equal struct {
 
 func (r *Equal) Assert() error {
 	if !reflect.DeepEqual(r.Expect, r.Actual) {
-		return fmt.Errorf("Expect:%v, Actual:%v", r.Expect, r.Actual)
+		return fmt.Errorf("expect:%v, actual:%v", r.Expect, r.Actual)
 	}
 
 	return nil
@@ -26,7 +26,7 @@ type NotEqual struct {
 
 func (r *NotEqual) Assert() error {
 	if reflect.DeepEqual(r.Expect, r.Actual) {
-		return fmt.Errorf("Expect:%v, Actual:%v", r.Expect, r.Actual)
+		return fmt.Errorf("expect:%v, actual:%v", r.Expect, r.Actual)
 	}
 
 	return nil
@@ -38,7 +38,7 @@ type True struct {
 
 func (r *True) Assert() error {
 	if true != r.Actual {
-		return fmt.Errorf("Expect:%v, Actual:%v", true, r.Actual)
+		return fmt.Errorf("expect:%v, actual:%v", true, r.Actual)
 	}
 
 	return nil
@@ -50,7 +50,7 @@ type False struct {
 
 func (r *False) Assert() error {
 	if false != r.Actual {
-		return fmt.Errorf("Expect:%v, Actual:%v", false, r.Actual)
+		return fmt.Errorf("expect:%v, actual:%v", false, r.Actual)
 	}
 
 	return nil
@@ -68,7 +68,7 @@ func (r *Panic) Assert() (err error) {
 	defer func() {
 		recover()
 		if nil == err {
-			err = fmt.Errorf("Expect panic, but no panic catched")
+			err = fmt.Errorf("expect panic, but no panic catched")
 		}
 	}()
 
@@ -91,7 +91,7 @@ func (r *NoPanic) Assert() (err error) {
 	defer func() {
 		ret := recover()
 		if nil != err {
-			err = fmt.Errorf("Expect no panic, but panic catched:%v", ret)
+			err = fmt.Errorf("expect no panic, but panic catched:%v", ret)
 		}
 	}()
 
@@ -109,7 +109,7 @@ type Match struct {
 func (r *Match) Assert() error {
 	regex, _ := regexp.Compile(r.Regexp)
 	if !regex.MatchString(r.Actual) {
-		return fmt.Errorf("Expect match:`%s`, but actual `%s`", r.Regexp, r.Actual)
+		return fmt.Errorf("expect match:`%s`, but actual `%s`", r.Regexp, r.Actual)
 	}
 
 	return nil
@@ -123,7 +123,7 @@ type NotMatch struct {
 func (r *NotMatch) Assert() error {
 	regex, _ := regexp.Compile(r.Regexp)
 	if regex.MatchString(r.Actual) {
-		return fmt.Errorf("Expect not match:`%s`, but actual `%s`", r.Regexp, r.Actual)
+		return fmt.Errorf("expect not match:`%s`, but actual `%s`", r.Regexp, r.Actual)
 	}
 
 	return nil
@@ -135,7 +135,7 @@ type Nil struct {
 
 func (r *Nil) Assert() error {
 	if nil != r.Actual {
-		return fmt.Errorf("Expect nil, but actual not nil:%v", r.Actual)
+		return fmt.Errorf("expect nil, but actual not nil:%v", r.Actual)
 	}
 
 	return nil
@@ -147,7 +147,7 @@ type NotNil struct {
 
 func (r *NotNil) Assert() error {
 	if nil != r.Actual {
-		return fmt.Errorf("Expect not nil, but actual nil")
+		return fmt.Errorf("expect not nil, but actual nil")
 	}
 
 	return nil

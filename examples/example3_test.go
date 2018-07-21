@@ -17,7 +17,7 @@ func (i *Inrange) Assert() error {
 		return nil
 	}
 	
-	return fmt.Errorf("Expect in range [%v, %v], Actual: %v", i.Min, i.Max, i.Value)
+	return fmt.Errorf("expect in range [%v, %v], Actual: %v", i.Min, i.Max, i.Value)
 }
 
 func Test_mycase1(t *testing.T) {
