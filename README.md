@@ -5,7 +5,7 @@
 [![Language](https://img.shields.io/badge/language-go-lightgrey.svg)](https://github.com/tinyhubs/assert)
 [![License](https://img.shields.io/badge/license-New%20BSD-yellow.svg?style=flat)](LICENSE)
 [![codecov](https://codecov.io/gh/tinyhubs/assert/branch/master/graph/badge.svg)](https://codecov.io/gh/tinyhubs/assert)
-[![goreport](https://www.goreportcard.com/badge/github.com/tinyhubs/assert)](https://www.goreportcard.com/report/github.com/tinyhubs/assert)
+[![goreport](https://www.goreportcard.com/badge/github.com/tinyhubs/et)](https://www.goreportcard.com/report/github.com/tinyhubs/et)
 
 `et` 全名是`EasyTest`,它是一个有着丰富断言函数的,可扩展的单元测试辅助库.
 
