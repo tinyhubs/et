@@ -16,7 +16,7 @@ func (i *Inrange) Assert() error {
 	if (i.Value >= i.Min) && (i.Value <= i.Max) {
 		return nil
 	}
-	
+
 	return fmt.Errorf("expect in range [%v, %v], Actual: %v", i.Min, i.Max, i.Value)
 }
 
@@ -37,4 +37,3 @@ func Test_mycase2(t *testing.T) {
 	value := 320
 	AssertInrange(t, min, max, value)
 }
-

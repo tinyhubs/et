@@ -37,7 +37,6 @@ func Assert(assertor Assertor, t *testing.T) {
 	AssertInner(t, "", assertor, 2)
 }
 
-
 func Asserti(assertor Assertor, t *testing.T, message string) {
 	AssertInner(t, message, assertor, 2)
 }
