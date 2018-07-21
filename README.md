@@ -1,12 +1,12 @@
 # 概要
 
-[![Build Status](https://travis-ci.org/tinyhubs/assert.svg?branch=master)](https://travis-ci.org/tinyhubs/assert)
-[![GoDoc](https://godoc.org/github.com/tinyhubs/assert?status.svg)](https://godoc.org/github.com/tinyhubs/assert)
-[![Language](https://img.shields.io/badge/language-go-lightgrey.svg)](https://github.com/tinyhubs/assert)
+[![Build Status](https://travis-ci.org/tinyhubs/et.svg?branch=master)](https://travis-ci.org/tinyhubs/et)
+[![GoDoc](https://godoc.org/github.com/tinyhubs/et?status.svg)](https://godoc.org/github.com/tinyhubs/et)
+[![Language](https://img.shields.io/badge/language-go-lightgrey.svg)](https://github.com/tinyhubs/et)
 [![License](https://img.shields.io/badge/license-New%20BSD-yellow.svg?style=flat)](LICENSE)
-[![codecov](https://codecov.io/gh/tinyhubs/assert/branch/master/graph/badge.svg)](https://codecov.io/gh/tinyhubs/assert)
+[![codecov](https://codecov.io/gh/tinyhubs/assert/branch/master/graph/badge.svg)](https://codecov.io/gh/tinyhubs/et)
 [![goreport](https://www.goreportcard.com/badge/github.com/tinyhubs/et)](https://www.goreportcard.com/report/github.com/tinyhubs/et)
-
+etetet
 `et` 全名是`EasyTest`,它是一个有着丰富断言函数的,可扩展的单元测试辅助库.
 
 # 安装
